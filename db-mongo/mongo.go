@@ -7,7 +7,12 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"gopkg.in/mgo.v2/bson"
 )
+
+type Quote struct {
+	quote string
+}
 
 func main() {
 
@@ -33,4 +38,17 @@ func main() {
 	}
 
 	fmt.Println("Connected to MongoDB!")
+
+	collection := client.Database("kanye_quotes").Collection("quotes")
+
+	// Inserting Data in MongoDB
+
+	insertResult, err := collection.InsertOne(ctx, bson.M{"quote": "I'm a rockstar."})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Inserted Data to DB", insertResult.InsertedID)
+
 }

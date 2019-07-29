@@ -43,7 +43,7 @@ func main() {
 
 	// Inserting Data in MongoDB
 
-	insertResult, err := collection.InsertOne(ctx, bson.M{"quote": "I'm a rockstar."})
+	insertResult, err := collection.InsertOne(ctx, bson.M{"quote": "I'm a pornstar."})
 
 	if err != nil {
 		fmt.Println(err)

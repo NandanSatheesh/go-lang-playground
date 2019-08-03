@@ -16,6 +16,10 @@ func main() {
 
 	_, p := s["123"]
 	n := map[string]int{"a": 123, "b": 234}
+
+	for k, v := range n {
+		fmt.Printf("%s -> %d\n", k, v)
+	}
 	fmt.Println(n)
 	fmt.Println(p)
 }

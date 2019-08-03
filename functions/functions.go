@@ -11,8 +11,8 @@ func main() {
 	fmt.Println(a, b)
 
 	array := []int{1, 2, 3, 4, 5}
+	fmt.Println(printArrayElements(1, 2, 3))
 	fmt.Println(printArrayElements(array...))
-
 }
 
 func printArrayElements(elements ...int) int {

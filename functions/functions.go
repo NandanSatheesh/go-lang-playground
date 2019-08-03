@@ -15,7 +15,6 @@ func add(a, b, c int) int {
 func fact(f int) int {
 	if f == 0 {
 		return 1
-	} else {
-		return f * fact(f-1)
 	}
+	return f * fact(f-1)
 }

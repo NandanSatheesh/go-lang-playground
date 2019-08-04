@@ -43,7 +43,7 @@ func main() {
 
 	fmt.Println("Connected to MongoDB!")
 
-	collection := client.Database("kanye_quotes").Collection("quotes")
+	collection := client.Database("quotes_production").Collection("quotes_db_prod")
 
 	file, err := ioutil.ReadFile("quotes.json")
 
@@ -59,7 +59,7 @@ func main() {
 
 	for i, quote := range data {
 		fmt.Println(i, " -> ", quote)
-		insertResult, err := collection.InsertOne(ctx, bson.M{"quote": quote})
+		insertResult, err := collection.InsertOne(ctx, bson.M{"id": i, "quote": quote})
 
 		if err != nil {
 			fmt.Println(err)

@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -43,15 +45,27 @@ func main() {
 
 	collection := client.Database("kanye_quotes").Collection("quotes")
 
-	// Inserting Data in MongoDB
-
-	quote := Quote{"I'm too good"}
-	insertResult, err := collection.InsertOne(ctx, bson.M{"quote": quote.quote})
+	file, err := ioutil.ReadFile("quotes.json")
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Inserted Data to DB", insertResult.InsertedID)
+	var data QuotesData
+
+	_ = json.Unmarshal([]byte(file), &data)
+
+	// Inserting Data in MongoDB
+
+	for i, quote := range data {
+		fmt.Println(i, " -> ", quote)
+		insertResult, err := collection.InsertOne(ctx, bson.M{"quote": quote})
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println("Inserted Data to DB", insertResult.InsertedID)
+	}
 
 }

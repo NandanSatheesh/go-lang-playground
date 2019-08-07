@@ -18,15 +18,11 @@ func init() {
 
 	csvFileName := flag.String("csv", "problem.csv", "CSV Data File Name")
 	flag.Parse()
-
 	file, err := os.Open(*csvFileName)
 	checkErr(err)
-
 	csvData := csv.NewReader(file)
-
 	for {
 		row, err := csvData.Read()
-
 		if err == io.EOF {
 			break
 		}
@@ -39,25 +35,18 @@ func init() {
 func main() {
 
 	reader := bufio.NewReader(os.Stdin)
-
 	score := 0
 	for i := 0; i < len(Questions); i++ {
-
 		fmt.Println("What's ", Questions[i], "?")
-
 		inputText, err := reader.ReadString('\n')
 		inputText = strings.Replace(inputText, "\n", "", -1)
 		checkErr(err)
-
 		userAnswer, err := strconv.ParseInt(inputText, 10, 64)
 		checkErr(err)
-
 		if userAnswer == Answers[i] {
 			score++
 		}
-
 	}
-
 	fmt.Println("Your score is ", score, ".")
 }
 

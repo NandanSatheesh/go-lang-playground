@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -15,7 +16,10 @@ var Answers []int64
 
 func init() {
 
-	file, err := os.Open("problem.csv")
+	csvFileName := flag.String("csv", "problem.csv", "CSV Data File Name")
+	flag.Parse()
+
+	file, err := os.Open(*csvFileName)
 	checkErr(err)
 
 	csvData := csv.NewReader(file)

@@ -9,6 +9,9 @@ import (
 func main() {
 	r := gin.Default()
 
-	r.GET("/ping", handler.PingGet)
+	r.POST("/ping", handler.PingGet)
+
+	r.POST("/appVersion", handler.HealthCheck)
+
 	r.Run()
 }

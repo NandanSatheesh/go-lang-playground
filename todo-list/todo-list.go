@@ -69,8 +69,19 @@ func addItem(c *gin.Context) {
 
 	fmt.Println(item)
 
+	statement, error := database.Prepare("INSERT INTO todo_list(title, description) VALUES (?, ?);")
+	checkErr(error)
+
+	result, error := statement.Exec(item.Name, item.Description)
+	checkErr(error)
+
+	lastInsertedId, error := result.LastInsertId()
+	checkErr(error)
+
 	c.JSON(200, gin.H{
-		"message": "AddItem",
+		"insertedId":   lastInsertedId,
+		"message":      "AddItem",
+		"responseCode": 200,
 	})
 }
 

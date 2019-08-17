@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:password@/login_db?charset=utf8")
+	db, err := sql.Open("mysql", "root:password@/notes?charset=utf8")
 	checkErr(err)
 
 	fmt.Println(db)

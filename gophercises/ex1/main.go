@@ -1,53 +1,54 @@
 package main
 
 import (
-	"bufio"
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"io"
 	"os"
-	"strconv"
 	"strings"
 )
 
-var Questions []string
-var Answers []int64
+const filePath = "/Users/nandan/Documents/go-lang-playground/gophercises/ex1/problem.csv"
 
-func init() {
-
-	csvFileName := flag.String("csv", "problem.csv", "CSV Data File Name")
-	flag.Parse()
-	file, err := os.Open(*csvFileName)
-	checkErr(err)
-	csvData := csv.NewReader(file)
-	for {
-		row, err := csvData.Read()
-		if err == io.EOF {
-			break
-		}
-		Questions = append(Questions, row[0])
-		number, _ := strconv.ParseInt(row[1], 10, 64)
-		Answers = append(Answers, number)
-	}
+type Problem struct {
+	question string
+	answer   string
 }
 
 func main() {
+	csvFileName := flag.String("csv", filePath, "A csv file which contains all problems")
+	flag.Parse()
 
-	reader := bufio.NewReader(os.Stdin)
-	score := 0
-	for i := 0; i < len(Questions); i++ {
-		fmt.Println("What's ", Questions[i], "?")
-		inputText, err := reader.ReadString('\n')
-		inputText = strings.Replace(inputText, "\n", "", -1)
-		checkErr(err)
-		userAnswer, err := strconv.ParseInt(inputText, 10, 64)
-		checkErr(err)
-		if userAnswer == Answers[i] {
-			score++
+	file, err := os.Open(*csvFileName)
+	checkErr(err)
+
+	reader := csv.NewReader(file)
+
+	lines, err := reader.ReadAll()
+	checkErr(err)
+
+	Problems := make([]Problem, len(lines))
+
+	for i, line := range lines {
+		Problems[i] = Problem{
+			question: line[0],
+			answer:   strings.TrimSpace(line[1]),
 		}
 	}
-	fmt.Println("Your score is ", score, ".")
+
+	count := 0
+
+	for i, p := range Problems {
+		fmt.Printf("Problem #%d: %s = \n", i, p.question)
+		var answer string
+		fmt.Scanf("%s\n", &answer)
+
+		if answer == p.answer {
+			count++
+		}
+	}
+
+	fmt.Printf("Your score is %d", count)
 }
 
 func checkErr(err error) {

@@ -9,6 +9,10 @@ import (
 
 var database *sql.DB
 
+type DeleteTodo struct {
+	ID int `json: "id"`
+}
+
 type TodoItem struct {
 	Name        string `json: "name"`
 	Description string `json: "description"`
@@ -85,6 +89,29 @@ func addItem(c *gin.Context) {
 	})
 }
 
+func deleteItem(c *gin.Context) {
+
+	var item DeleteTodo
+	c.BindJSON(&item)
+
+	fmt.Println(item)
+
+	statement, error := database.Prepare("DELETE FROM todo_list WHERE id=?;")
+	checkErr(error)
+
+	result, error := statement.Exec(item.ID)
+	checkErr(error)
+
+	RowsAffected, error := result.RowsAffected()
+	checkErr(error)
+
+	c.JSON(200, gin.H{
+		"rowsAffected": RowsAffected,
+		"message":      "DeleteItem",
+		"responseCode": 200,
+	})
+}
+
 func main() {
 
 	r := gin.Default()
@@ -98,6 +125,8 @@ func main() {
 	r.GET("/getAllItems", getAllItem)
 
 	r.POST("/addItem", addItem)
+
+	r.POST("/deleteItem", deleteItem)
 
 	r.Run()
 }

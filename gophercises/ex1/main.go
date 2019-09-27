@@ -8,47 +8,49 @@ import (
 	"strings"
 )
 
-const filePath = "D:\\go-lang-playground/gophercises/ex1/problem.csv"
-
 type Problem struct {
-	question string
-	answer   string
+	Question string
+	Answer   string
 }
 
 func main() {
-	csvFileName := flag.String("csv", filePath, "A csv file which contains all problems")
+
+	csvFileName := flag.String("csv", "D:\\go-lang-playground\\gophercises\\ex1\\problem.csv",
+		"a csv in the format 'question,answer'")
 	flag.Parse()
 
 	file, err := os.Open(*csvFileName)
 	checkErr(err)
 
 	reader := csv.NewReader(file)
+	lines, error := reader.ReadAll()
+	checkErr(error)
 
-	lines, err := reader.ReadAll()
-	checkErr(err)
+	problems := parseLines(lines)
+	counter := 0
 
-	Problems := make([]Problem, len(lines))
+	for i, p := range problems {
+		fmt.Printf("Problem #%d : %s \n", i+1, p.Question)
 
-	for i, line := range lines {
-		Problems[i] = Problem{
-			question: line[0],
-			answer:   strings.TrimSpace(line[1]),
-		}
-	}
-
-	count := 0
-
-	for i, p := range Problems {
-		fmt.Printf("Problem #%d: %s = \n", i, p.question)
 		var answer string
 		fmt.Scanf("%s\n", &answer)
-
-		if answer == p.answer {
-			count++
+		if answer == p.Answer {
+			counter++
 		}
 	}
+	fmt.Printf("You scored %d out of %d.\n", counter, len(problems))
+}
 
-	fmt.Printf("Your score is %d", count)
+func parseLines(lines [][]string) []Problem {
+	ret := make([]Problem, len(lines))
+
+	for i, line := range lines {
+		ret[i] = Problem{
+			Question: strings.TrimSpace(line[0]),
+			Answer:   strings.TrimSpace(line[1]),
+		}
+	}
+	return ret
 }
 
 func checkErr(err error) {

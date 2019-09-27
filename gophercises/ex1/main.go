@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const filePath = "/Users/nandan/Documents/go-lang-playground/gophercises/ex1/problem.csv"
+const filePath = "D:\\go-lang-playground/gophercises/ex1/problem.csv"
 
 type Problem struct {
 	question string

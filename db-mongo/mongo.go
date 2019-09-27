@@ -13,7 +13,7 @@ import (
 type QuotesData []string
 
 type Quote struct {
-	quote string `json:"quote"`
+	Quote string `json:"quote"`
 }
 
 func main() {
@@ -45,8 +45,8 @@ func main() {
 
 	// Inserting Data in MongoDB
 
-	quote := Quote{"I'm too good"}
-	insertResult, err := collection.InsertOne(ctx, bson.M{"quote": quote.quote})
+	quote := Quote{"Whaaaat????"}
+	insertResult, err := collection.InsertOne(ctx, bson.M{"quote": quote.Quote})
 
 	if err != nil {
 		fmt.Println(err)

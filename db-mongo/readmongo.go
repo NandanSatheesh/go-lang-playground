@@ -50,7 +50,7 @@ func main() {
 	collection := client.Database("quotes_production").Collection("quotes_db_prod")
 
 	// filter := bson.D{{"id", 12}}
-	err = collection.FindOne(ctx, bson.M{"id": int32(1)}).Decode(&Result)
+	err = collection.FindOne(ctx, bson.M{"id": int32(0)}).Decode(&Result)
 	if err != nil {
 		log.Fatal(err)
 	}

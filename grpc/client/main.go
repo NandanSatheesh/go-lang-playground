@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/NandanSatheesh/go-lang-playground/grpc/proto"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"log"
+	"net/http"
+	"strconv"
 )
 
 func main() {
@@ -19,35 +22,49 @@ func main() {
 	clientMultiply := proto.NewMultiplyServiceClient(conn)
 
 	g := gin.Default()
-
-	g.GET("/add", func(i *gin.Context) {
-
-		response, err := clientAdd.Add(i, &proto.Request{
-			A: int64(10),
-			B: int64(12),
-		})
-
+	g.GET("/add/:a/:b", func(ctx *gin.Context) {
+		a, err := strconv.ParseUint(ctx.Param("a"), 10, 64)
 		if err != nil {
-			panic(err)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Parameter A"})
+			return
 		}
 
-		print(response.Result)
+		b, err := strconv.ParseUint(ctx.Param("b"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Parameter B"})
+			return
+		}
 
+		req := &proto.Request{A: int64(a), B: int64(b)}
+		if response, err := clientAdd.Add(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"result": fmt.Sprint(response.Result),
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 	})
 
-	g.GET("/mul", func(i *gin.Context) {
-
-		response, err := clientMultiply.Multiply(i, &proto.Request{
-			A: int64(10),
-			B: int64(12),
-		})
-
+	g.GET("/mult/:a/:b", func(ctx *gin.Context) {
+		a, err := strconv.ParseUint(ctx.Param("a"), 10, 64)
 		if err != nil {
-			panic(err)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Parameter A"})
+			return
 		}
+		b, err := strconv.ParseUint(ctx.Param("b"), 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Parameter B"})
+			return
+		}
+		req := &proto.Request{A: int64(a), B: int64(b)}
 
-		print(response.Result)
-
+		if response, err := clientMultiply.Multiply(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"result": fmt.Sprint(response.Result),
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 	})
 
 	if err := g.Run(":8080"); err != nil {

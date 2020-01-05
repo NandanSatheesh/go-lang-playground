@@ -16,10 +16,18 @@ var tokenKey = []byte("secretKey")
 
 // Inject fields `ID`, `CreatedAt`, `UpdatedAt`, `DeletedAt` into model `User`
 type User struct {
-	Id          uint64 `gorm:"AUTO_INCREMENT"`
-	Name        string
-	PhoneNumber int64
-	Address     string
+	gorm.Model
+	Name         string
+	MobileNumber int64 `gorm:"unique;not null"`
+	Address      string
+}
+
+type MobileNumberOtp struct {
+	gorm.Model
+	User         User
+	UserId       int64 `gorm:"ForeignKey:id"`
+	MobileNumber int64
+	Otp          int16
 }
 
 func GenerateJwt(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +37,7 @@ func GenerateJwt(w http.ResponseWriter, r *http.Request) {
 
 	claims["authorized"] = true
 	claims["user"] = "Nandan"
-	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+	claims["exp"] = time.Now().Unix()
 
 	tokenString, err := token.SignedString(myKey)
 
@@ -40,12 +48,25 @@ func GenerateJwt(w http.ResponseWriter, r *http.Request) {
 	defer dbHandler.Close()
 
 	var user = User{
-		Name:        "Nandan",
-		PhoneNumber: 8762171130,
-		Address:     "Bangalore",
+		Name:         "Alan",
+		MobileNumber: 8762171140,
+		Address:      "Bangalore",
 	}
-	dbHandler.Create(&user)
 
+	var otp = MobileNumberOtp{
+		MobileNumber: user.MobileNumber,
+		Otp:          6969,
+		User:         user,
+	}
+
+	u := User{}
+	o := MobileNumberOtp{}
+
+	dbHandler.Save(&otp)
+
+	dbHandler.Model(&o).Association("user").Find(&o.User)
+
+	fmt.Println(u)
 	fmt.Fprintf(w, tokenString)
 }
 
@@ -93,7 +114,9 @@ func handleRequests() {
 
 func main() {
 	dbHandler, err := gorm.Open("mysql", "root:@/login?charset=utf8&parseTime=True&loc=Local")
-	dbHandler.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&User{})
+	//dbHandler.Set("gorm:table_options", "ENGINE=InnoDB").DropTableIfExists(&User{}, &MobileNumberOtp{})
+	//dbHandler.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&User{}, &MobileNumberOtp{})
+	dbHandler.AutoMigrate(&User{}, &MobileNumberOtp{})
 	defer dbHandler.Close()
 	checkErr(err)
 	print(dbHandler, err)

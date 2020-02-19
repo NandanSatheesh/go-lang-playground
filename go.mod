@@ -3,6 +3,7 @@ module github.com/NandanSatheesh/go-lang-playground
 go 1.12
 
 require (
+	github.com/aws/aws-lambda-go v1.14.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/garyburd/redigo v1.6.0
 	github.com/gin-gonic/gin v1.4.0
